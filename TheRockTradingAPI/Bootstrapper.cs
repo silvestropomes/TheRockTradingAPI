@@ -18,6 +18,7 @@ namespace TheRockTradingAPI
         {
             var container = new Container();
             container.Register<ApiConfig>(Lifestyle.Singleton);
+            container.Register<IRestCaller, ThrottledRestCaller>(Lifestyle.Singleton);
             container.Register<RestCaller>(Lifestyle.Singleton);
             container.Register<TickerRequest>();
             container.Register<BalancesRequest>();
