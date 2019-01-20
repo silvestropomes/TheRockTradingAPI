@@ -5,7 +5,7 @@ using TheRockTradingAPI.contract;
 
 namespace TheRockTradingAPI.response
 {
-    public class TickerResponse : IResponse
+    public class TickerResponse : BaseResponse
     {
         public DateTime Date { get; set; }
         public string Fund_id { get; set; }

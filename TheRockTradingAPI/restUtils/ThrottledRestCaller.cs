@@ -8,6 +8,7 @@ using System.Reactive.Linq;
 using System.Collections.Concurrent;
 using TheRockTradingAPI.contract;
 using System.Reactive;
+using System.Threading;
 
 namespace TheRockTradingAPI.restUtils
 {
@@ -15,29 +16,59 @@ namespace TheRockTradingAPI.restUtils
     {
         private readonly RestCaller restCaller;
         private readonly BlockingCollection<QueuedRestCall> blockingQueue;
-        private readonly int maxEnqueuedCalls = 3;
-        private IObservable<long> timer = Observable.Interval(TimeSpan.FromSeconds(1));
+        private readonly ApiConfig apiConfig;
+        private IObservable<long> timer;
         private IDisposable timerSubscriber;
+        private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
-        public ThrottledRestCaller(RestCaller restCaller)
+        public ThrottledRestCaller(RestCaller restCaller, ApiConfig config)
         {
+            this.apiConfig = config;
             this.restCaller = restCaller;
-            blockingQueue = new BlockingCollection<QueuedRestCall>(maxEnqueuedCalls);
+            blockingQueue = new BlockingCollection<QueuedRestCall>(this.apiConfig.MaxEnqueuedCallsInThrottledCaller);
+            this.timer = Observable.Interval(TimeSpan.FromMilliseconds(this.apiConfig.RestCallDelayMilliseconds));
+
             this.timerSubscriber = timer.Subscribe((time) => 
             {
-                var restCall = this.blockingQueue.Take(); // cancellation token
+                try
+                {
+                    Console.WriteLine($"starting take: {time}");
+                    var restCall = this.blockingQueue.Take(cancellationTokenSource.Token);
+                    Console.WriteLine("taken");
 
-                restCall.Response.Add(restCall.CallFunc?.Invoke());
-                restCall.Response.CompleteAdding();
-                Console.WriteLine(time);
+                    Console.WriteLine("starting invoke:");
+                    IResponse response = null;
+                    response = restCall.CallFunc?.Invoke();
+                    //try
+                    //{
+                    //    response = restCall.CallFunc?.Invoke();
+                    //}
+                    //catch (Exception e)
+                    //{
+                    //    response = new response.EmptyResponse { Exception = e };
+                    //}
+                    //finally
+                    //{
+                    //    restCall.Response.Add(response);
+                    //}
+                    
+                    Console.WriteLine($"{DateTime.Now.ToString("O")}: invoked");
+                    restCall.Response.CompleteAdding();
+                } catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
             });
         }
 
         public void Dispose()
         {
+            Console.WriteLine($"{DateTime.Now.ToString("O")}: Cancellation Token firing");
+            this.cancellationTokenSource.Cancel(true);
+            Console.WriteLine($"{DateTime.Now.ToString("O")}: Cancellation Token fired");
+            this.timerSubscriber.Dispose();
             this.restCaller.Dispose();
             this.blockingQueue.Dispose();
-            this.timerSubscriber.Dispose();
         }
 
         public T Get<T>(string uri) where T : IResponse
@@ -56,8 +87,28 @@ namespace TheRockTradingAPI.restUtils
                         return this.restCaller.Get<T>(uri);
                     }
                 };
-                this.blockingQueue.Add(action); // add cancellation token (for timeout)
-                return (T)action.Response.Take(); // add cancellation token (for timeout)
+
+                Console.WriteLine($"{DateTime.Now.ToString("O")}: - start TryAdd");
+                if(!this.blockingQueue.TryAdd(action, this.apiConfig.TimeOutMilliseconds, this.cancellationTokenSource.Token))
+                {
+                    throw new Exception("trying to add action: unable to add action to blockingQueue, or cancellationToken has been fired");
+                }
+                Console.WriteLine($"{DateTime.Now.ToString("O")}: - end TryAdd");
+
+                Console.WriteLine($"{DateTime.Now.ToString("O")}: - start TryTake");
+                IResponse ret = null;
+                if(!action.Response.TryTake(out ret, this.apiConfig.TimeOutMilliseconds, this.cancellationTokenSource.Token))
+                {
+                    throw new Exception("trying to take response: unable to retrieve a response in time, or cancellationtoken has been fired");
+                }
+                Console.WriteLine($"{DateTime.Now.ToString("O")}: - end TryTake");
+
+                if (ret.Exception != null)
+                {
+                    throw ret.Exception;
+                };
+
+                return (T)ret;
             });
         }
 

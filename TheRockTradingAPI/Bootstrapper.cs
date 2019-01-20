@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using SimpleInjector;
-using Newtonsoft.Json;
 using TheRockTradingAPI.restUtils;
 using TheRockTradingAPI.request;
 using TheRockTradingAPI.contract;
-using System.IO;
+using System.Net.Http;
 
 namespace TheRockTradingAPI
 {
-    
+
     internal class Bootstrapper
     {
 
@@ -18,7 +15,8 @@ namespace TheRockTradingAPI
         {
             var container = new Container();
             container.Register<ApiConfig>(Lifestyle.Singleton);
-            container.Register<IRestCaller, ThrottledRestCaller>(Lifestyle.Singleton);
+            container.Register(() => new HttpClient(), Lifestyle.Singleton);
+            container.Register<IRestCaller, RestCaller>(Lifestyle.Singleton);
             container.Register<RestCaller>(Lifestyle.Singleton);
             container.Register<TickerRequest>();
             container.Register<BalancesRequest>();

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace TheRockTradingAPI
 {
-    public class TheRockApiClient
+    public class TheRockApiClient : IDisposable
     {
         private IServiceProvider serviceProvider = Bootstrapper.Bootstrap();
         private IRestCaller restCaller;
@@ -44,6 +44,11 @@ namespace TheRockTradingAPI
         public async Task<T> GetAsync<T>(IGetRequest request) where T : IResponse
         {
             return await restCaller.GetAsync<T>(request.GetUri());
+        }
+
+        public void Dispose()
+        {
+            (this.restCaller as IDisposable)?.Dispose();
         }
 
         public ITheRockRequestFactory TheRockRequestFactory => serviceProvider.GetService<ITheRockRequestFactory>();

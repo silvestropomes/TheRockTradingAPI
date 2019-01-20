@@ -19,31 +19,40 @@ namespace TestCLI
 
         public void Run(string[] args)
         {
-            var client = new TheRockApiClient();
-            var requestFactory = client.TheRockRequestFactory;
-            //try
-            //{
-            //    var balances = client.Get<BalancesResponse>(requestFactory.GetBalancesRequest());
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e.Message);
-            //}
+            using (var client = new TheRockApiClient())
+            {
+                var requestFactory = client.TheRockRequestFactory;
+                try
+                {
+                    var balances = client.Get<BalancesResponse>(requestFactory.GetBalancesRequest());
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"program: {e.Message}");
+                }
 
-            var a1 = client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("BTCEUR"));
-            var a2 = client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("LTCEUR"));
-            var a3 = client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("ETHEUR"));
-            Console.WriteLine(DateTime.Now.ToLongTimeString());
-            Task.WaitAll(a1, a2, a3);
-            Console.WriteLine(DateTime.Now.ToLongTimeString());
+                var a1 = client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("BTCEUR"));
+                var a2 = client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("LTCEUR"));
+                var a3 = client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("ETHEUR"));
+                Console.WriteLine($"before waitAll: {DateTime.Now.ToLongTimeString()}");
+                Task.WaitAll(a1, a2, a3);
+                Console.WriteLine($"after waitAll: {DateTime.Now.ToLongTimeString()}");
 
-            var r1 = a1.Result;
-            var r2 = a2.Result;
-            var r3 = a3.Result;
+                //System.Threading.Thread.Sleep(10000);
 
-            var tickerBTCEUR = client.Get<TickerResponse>(requestFactory.GetTickerRequest("BTCEUR"));
-            var tickerETHEUR = client.Get<TickerResponse>(requestFactory.GetTickerRequest("ETHEUR"));
-            var tickerLTCEUR = client.Get<TickerResponse>(requestFactory.GetTickerRequest("LTCEUR"));
+                var r1 = a1.Result;
+                var r2 = a2.Result;
+                var r3 = a3.Result;
+
+                Console.WriteLine($"ticker: {DateTime.Now.ToLongTimeString()}");
+                var tickerBTCEUR = client.Get<TickerResponse>(requestFactory.GetTickerRequest("BTCEUR"));
+
+                Console.WriteLine($"ticker: {DateTime.Now.ToLongTimeString()}");
+                var tickerETHEUR = client.Get<TickerResponse>(requestFactory.GetTickerRequest("ETHEUR"));
+
+                Console.WriteLine($"ticker: {DateTime.Now.ToLongTimeString()}");
+                var tickerLTCEUR = client.Get<TickerResponse>(requestFactory.GetTickerRequest("LTCEUR"));
+            }
         }
     }
 }

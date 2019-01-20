@@ -11,5 +11,11 @@ namespace TheRockTradingAPI
         public string PrivateKey { get; set; }
 
         public bool AreKeysPresent => !(string.IsNullOrEmpty(this.ApiKey) || string.IsNullOrEmpty(this.PrivateKey));
+
+        public int MaxEnqueuedCallsInThrottledCaller => 20;
+
+        public double RestCallDelayMilliseconds => 100;
+
+        public int TimeOutMilliseconds => 10000;
     }
 }

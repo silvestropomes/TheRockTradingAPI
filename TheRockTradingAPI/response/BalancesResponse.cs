@@ -7,7 +7,7 @@ using TheRockTradingAPI.contract;
 namespace TheRockTradingAPI.response
 {
     
-    public class BalancesResponse : IResponse
+    public class BalancesResponse : BaseResponse
     {
         internal BalancesResponse() { }
 

@@ -6,5 +6,6 @@ namespace TheRockTradingAPI.contract
 {
     public interface IResponse
     {
+        Exception Exception { get; set; }
     }
 }
