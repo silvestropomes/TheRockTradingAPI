@@ -5,10 +5,11 @@ using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using TheRockTradingAPI.contract;
 
 namespace TheRockTradingAPI.restUtils
 {
-    internal class RestCaller : IDisposable
+    internal class RestCaller : IRestCaller, IDisposable
     {
         private HttpClient httpClient;
         private readonly ApiConfig apiConfig;
@@ -24,7 +25,7 @@ namespace TheRockTradingAPI.restUtils
             }
         }
 
-        public async Task<T> GetAsync<T>(string uri)
+        public async Task<T> GetAsync<T>(string uri) where T : IResponse
         {
             var message = GetStandardRequestMessage(HttpMethod.Get, uri);
             if (this.apiConfig.AreKeysPresent)
@@ -39,19 +40,19 @@ namespace TheRockTradingAPI.restUtils
             return JsonConvert.DeserializeObject<T>(content);
         }
 
-        public T Get<T>(string uri)
+        public T Get<T>(string uri) where T : IResponse
         {
             return GetAsync<T>(uri).Result;
         }
 
         private HttpRequestMessage GetStandardRequestMessage(HttpMethod httpMethod, string uri)
         {
-            var message =  new HttpRequestMessage
+            var message = new HttpRequestMessage
             {
                 Method = httpMethod,
                 Content = new StringContent(""),
                 RequestUri = new Uri(uri)
-        };
+            };
             message.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
 
             return message;
