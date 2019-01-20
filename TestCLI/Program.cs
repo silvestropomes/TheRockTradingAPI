@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using TheRockTradingAPI;
 using TheRockTradingAPI.response;
@@ -21,29 +22,52 @@ namespace TestCLI
         {
             var client = new TheRockApiClient();
             var requestFactory = client.TheRockRequestFactory;
-            //try
-            //{
-            //    var balances = client.Get<BalancesResponse>(requestFactory.GetBalancesRequest());
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e.Message);
-            //}
+            try
+            {
+                var balances = client.Get<BalancesResponse>(requestFactory.GetBalancesRequest());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
 
-            var a1 = client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("BTCEUR"));
-            var a2 = client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("LTCEUR"));
-            var a3 = client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("ETHEUR"));
-            Console.WriteLine(DateTime.Now.ToLongTimeString());
-            Task.WaitAll(a1, a2, a3);
-            Console.WriteLine(DateTime.Now.ToLongTimeString());
+            var responseList = new List<Task<TickerResponse>>();
 
-            var r1 = a1.Result;
-            var r2 = a2.Result;
-            var r3 = a3.Result;
+            Console.WriteLine(DateTime.Now.ToString("o"));
+            responseList.Add(client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("BTCEUR")));
+            responseList.Add(client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("LTCEUR")));
+            responseList.Add(client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("ETHEUR")));
+            responseList.Add(client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("BTCEUR")));
+            responseList.Add(client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("LTCEUR")));
+            responseList.Add(client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("ETHEUR")));
+            responseList.Add(client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("BTCEUR")));
+            responseList.Add(client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("LTCEUR")));
+            responseList.Add(client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("ETHEUR")));
+            responseList.Add(client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("BTCEUR")));
+            responseList.Add(client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("LTCEUR")));
+            responseList.Add(client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("ETHEUR")));
+            Task.WaitAll(responseList.ToArray());
+            Console.WriteLine(DateTime.Now.ToString("o"));
 
+
+
+            Console.WriteLine(DateTime.Now.ToString("o"));
             var tickerBTCEUR = client.Get<TickerResponse>(requestFactory.GetTickerRequest("BTCEUR"));
             var tickerETHEUR = client.Get<TickerResponse>(requestFactory.GetTickerRequest("ETHEUR"));
             var tickerLTCEUR = client.Get<TickerResponse>(requestFactory.GetTickerRequest("LTCEUR"));
+
+            var tickerBTCEUR2 = client.Get<TickerResponse>(requestFactory.GetTickerRequest("BTCEUR"));
+            var tickerETHEUR2 = client.Get<TickerResponse>(requestFactory.GetTickerRequest("ETHEUR"));
+            var tickerLTCEUR2 = client.Get<TickerResponse>(requestFactory.GetTickerRequest("LTCEUR"));
+
+            var tickerBTCEUR3 = client.Get<TickerResponse>(requestFactory.GetTickerRequest("BTCEUR"));
+            var tickerETHEUR3 = client.Get<TickerResponse>(requestFactory.GetTickerRequest("ETHEUR"));
+            var tickerLTCEUR3 = client.Get<TickerResponse>(requestFactory.GetTickerRequest("LTCEUR"));
+
+            var tickerBTCEUR4 = client.Get<TickerResponse>(requestFactory.GetTickerRequest("BTCEUR"));
+            var tickerETHEUR4 = client.Get<TickerResponse>(requestFactory.GetTickerRequest("ETHEUR"));
+            var tickerLTCEUR4 = client.Get<TickerResponse>(requestFactory.GetTickerRequest("LTCEUR"));
+            Console.WriteLine(DateTime.Now.ToString("o"));
         }
     }
 }

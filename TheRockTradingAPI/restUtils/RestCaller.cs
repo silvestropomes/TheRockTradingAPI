@@ -15,9 +15,9 @@ namespace TheRockTradingAPI.restUtils
         private readonly ApiConfig apiConfig;
         private readonly HMACSHA512 hashCalculator;
 
-        public RestCaller(ApiConfig apiConfig)
+        public RestCaller(ApiConfig apiConfig, HttpClient httpClient)
         {
-            this.httpClient = new HttpClient();
+            this.httpClient = httpClient;
             this.apiConfig = apiConfig;
             if (this.apiConfig.AreKeysPresent)
             {
