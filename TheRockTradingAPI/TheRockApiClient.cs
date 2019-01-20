@@ -6,14 +6,13 @@ using TheRockTradingAPI.request;
 using TheRockTradingAPI.response;
 using TheRockTradingAPI.restUtils;
 using TheRockTradingAPI.extensions;
-using System.Threading.Tasks;
 
 namespace TheRockTradingAPI
 {
     public class TheRockApiClient
     {
         private IServiceProvider serviceProvider = Bootstrapper.Bootstrap();
-        private IRestCaller restCaller;
+        private RestCaller restCaller;
 
         public TheRockApiClient()
         {
@@ -33,17 +32,12 @@ namespace TheRockTradingAPI
                 config.ApiKey = apiKey;
             }
 
-            restCaller = serviceProvider.GetService<IRestCaller>();
+            restCaller = serviceProvider.GetService<RestCaller>();
         }
 
-        public T Get<T>(IGetRequest request) where T : IResponse
+        public BalancesResponse Get<BalancesResponse>(IGetRequest request)
         {
-            return restCaller.Get<T>(request.GetUri());
-        }
-
-        public async Task<T> GetAsync<T>(IGetRequest request) where T : IResponse
-        {
-            return await restCaller.GetAsync<T>(request.GetUri());
+            return restCaller.Get<BalancesResponse>(request.GetUri());
         }
 
         public ITheRockRequestFactory TheRockRequestFactory => serviceProvider.GetService<ITheRockRequestFactory>();
