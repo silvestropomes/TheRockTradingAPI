@@ -9,5 +9,9 @@ namespace TheRockTradingAPI.contract
     {
         IGetRequest GetBalancesRequest();
         IGetRequest GetTickerRequest(string assetPair);
+
+        IPostRequest GetPlaceSellOrderRequest(string assetPair, decimal amount, decimal price);
+        IPostRequest GetPlaceBuyOrderRequest(string assetPair, decimal amount, decimal price);
+        
     }
 }

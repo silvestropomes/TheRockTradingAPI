@@ -21,7 +21,17 @@ namespace TestCLI
         public void Run(string[] args)
         {
             var client = new TheRockApiClient();
+
             var requestFactory = client.TheRockRequestFactory;
+            try
+            {
+                var order = client.Post<OrderResponse>(requestFactory.GetPlaceBuyOrderRequest("LTCEUR", 0.01m, 1m));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
             try
             {
                 var balances = client.Get<BalancesResponse>(requestFactory.GetBalancesRequest());

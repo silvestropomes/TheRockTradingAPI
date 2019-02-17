@@ -47,6 +47,16 @@ namespace TheRockTradingAPI
             return await restCaller.GetAsync<T>(request.GetUri());
         }
 
+        public T Post<T>(IPostRequest request) where T : IResponse
+        {
+            return restCaller.Post<T>(request.GetUri(), request.GetPostContent());
+        }
+
+        public async Task<T> PostAsync<T>(IPostRequest request) where T : IResponse
+        {
+            return await restCaller.PostAsync<T>(request.GetUri(), request.GetPostContent());
+        }
+
         public ITheRockRequestFactory TheRockRequestFactory => serviceProvider.GetService<ITheRockRequestFactory>();
 
     }

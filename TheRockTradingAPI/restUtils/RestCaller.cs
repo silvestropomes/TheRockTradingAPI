@@ -60,15 +60,51 @@ namespace TheRockTradingAPI.restUtils
 
         private HttpRequestMessage GetAuthenticatedRequestMessage(HttpRequestMessage message)
         {
+
+            var headers = GetAuthenticationHeaders(message);
+            foreach(var header in headers)
+            {
+                message.Headers.Add(header.Key, header.Value);
+            }
+
+            return message;
+        }
+
+        private IList<KeyValuePair<string, string>> GetAuthenticationHeaders(HttpRequestMessage message)
+        {
             var nonce = DateTime.Now.Ticks / 1000L;
             var signature = hashCalculator.ComputeHash(Encoding.UTF8.GetBytes($"{nonce}{message.RequestUri.AbsoluteUri}"));
             var b16Signature = BitConverter.ToString(signature).Replace("-", "").ToLower();
 
-            message.Headers.Add("X-TRT-KEY", this.apiConfig.ApiKey);
-            message.Headers.Add("X-TRT-SIGN", b16Signature);
-            message.Headers.Add("X-TRT-NONCE", nonce.ToString());
+            var headers = new List<KeyValuePair<string, string>>();
+            headers.Add(new KeyValuePair<string, string>("X-TRT-KEY", this.apiConfig.ApiKey));
+            headers.Add(new KeyValuePair<string, string>("X-TRT-SIGN", b16Signature));
+            headers.Add(new KeyValuePair<string, string>("X-TRT-NONCE", nonce.ToString()));
 
-            return message;
+            return headers;
+        }
+
+        public async Task<T> PostAsync<T>(string uri, string postContent) where T : IResponse
+        {
+            var message = GetStandardRequestMessage(HttpMethod.Post, uri);
+
+            StringContent content = new StringContent(postContent, Encoding.UTF8, "application/json");
+
+            if (this.apiConfig.AreKeysPresent)
+            {
+                message = GetAuthenticatedRequestMessage(message);
+            }
+            message.Content = content;
+
+            var response = await httpClient.SendAsync(message);
+            response.EnsureSuccessStatusCode();
+            
+            return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
+        }
+
+        public T Post<T>(string uri, string postContent) where T : IResponse
+        {
+            return this.PostAsync<T>(uri, postContent).Result;
         }
 
         public void Dispose()

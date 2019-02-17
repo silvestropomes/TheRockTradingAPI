@@ -29,5 +29,15 @@ namespace TheRockTradingAPI.restUtils
         {
             return this.restCaller.GetAsync<T>(uri);
         }
+
+        public T Post<T>(string uri, string postContent) where T : IResponse
+        {
+            return this.restCaller.Post<T>(uri, postContent);
+        }
+
+        public Task<T> PostAsync<T>(string uri, string postContent) where T : IResponse
+        {
+            return this.restCaller.PostAsync<T>(uri, postContent);
+        }
     }
 }
