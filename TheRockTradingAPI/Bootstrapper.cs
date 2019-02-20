@@ -25,6 +25,7 @@ namespace TheRockTradingAPI
             container.Register<TickerRequest>();
             container.Register<BalancesRequest>();
             container.Register<PlaceOrderRequest>();
+            container.Register<TradesRequest>();
             container.Register<ITheRockRequestFactory>(() => new TheRockRequestFactory(container), Lifestyle.Singleton);
             container.Register(() => new HttpClient(), Lifestyle.Singleton);
             container.Register(() => new ThrottlingDelegatingHandler(new System.Threading.SemaphoreSlim(1), container.GetInstance<ApiConfig>()) { InnerHandler = new HttpClientHandler() },

@@ -20,6 +20,7 @@ namespace TheRockTradingAPI.response
         public decimal Low { get; set; }
         public decimal High { get; set; }
         public decimal Volume { get; set; }
+        public decimal Spread => Math.Round((this.Ask - this.Bid) / this.Ask, 2);
         [JsonProperty("volume_traded")]
         public decimal VolumeTraded { get; set; }
     }

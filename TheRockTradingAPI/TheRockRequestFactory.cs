@@ -16,6 +16,9 @@ namespace TheRockTradingAPI
             this.serviceProvider = serviceProvider;
         }
 
+
+        //*** GET ***///
+
         public IGetRequest GetBalancesRequest()
         {
             return serviceProvider.GetService<BalancesRequest>();
@@ -27,6 +30,21 @@ namespace TheRockTradingAPI
             req.AssetPair = assetPair;
             return req;
         }
+
+        public IGetRequest GetUserTradesRequest(string assetPair, int? tradeId, int? page, int? perPage, DateTime? after, DateTime? before)
+        {
+            var req = serviceProvider.GetService<TradesRequest>();
+            req.AssetPair = assetPair;
+            req.TradeId = tradeId;
+            req.Page = page;
+            req.PerPage = perPage;
+            req.After = after;
+            req.Before = before;
+
+            return req;
+        }
+
+        //*** POST ***///
 
         public IPostRequest GetPlaceBuyOrderRequest(string assetPair, decimal amount, decimal price)
         {

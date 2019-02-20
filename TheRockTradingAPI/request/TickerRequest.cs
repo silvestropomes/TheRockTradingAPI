@@ -11,6 +11,6 @@ namespace TheRockTradingAPI.request
 
         internal string AssetPair { get; set; }
 
-        internal override string Uri => $@"/v1/funds/{this.AssetPair}/ticker";
+        internal override string Uri => $@"v1/funds/{this.AssetPair}/ticker";
     }
 }

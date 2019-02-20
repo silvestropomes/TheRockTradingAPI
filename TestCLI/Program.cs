@@ -25,7 +25,9 @@ namespace TestCLI
             var requestFactory = client.TheRockRequestFactory;
             try
             {
-                var order = client.Post<OrderResponse>(requestFactory.GetPlaceBuyOrderRequest("LTCEUR", 0.01m, 1m));
+                //var order = client.Post<OrderResponse>(requestFactory.GetPlaceBuyOrderRequest("LTCEUR", 0.01m, 1m));
+                var r = requestFactory.GetUserTradesRequest("LTCEUR", null, null, null, new DateTime(2019, 2, 10), new DateTime(2019, 2, 20));
+                var ltcTrades =  client.Get<TradesResponse>(r);
             }
             catch (Exception e)
             {

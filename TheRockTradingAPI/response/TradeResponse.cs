@@ -4,10 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using TheRockTradingAPI.common;
+using TheRockTradingAPI.contract;
 
 namespace TheRockTradingAPI.response
 {
-    public class TradeResponse
+    public class TradeResponse : IResponse
     {
         public int Id { get; set; }
 
@@ -21,8 +22,13 @@ namespace TheRockTradingAPI.response
         [JsonConverter(typeof(StringEnumConverter))]
         public OrderSideEnum Side { get; set; }
 
+        [JsonProperty("order_id")]
+        public int OrderId { get; set; }
+
         public bool Dark { get; set; }
 
         public DateTime Date { get; set; }
+
+        public IList<TransactionResponse> transactions { get; set; }
     }
 }
