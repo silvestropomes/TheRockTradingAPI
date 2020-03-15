@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using TheRockTradingAPI.contract;
 using TheRockTradingAPI.request;
 using TheRockTradingAPI.extensions;

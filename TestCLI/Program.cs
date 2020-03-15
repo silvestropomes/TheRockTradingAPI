@@ -45,6 +45,7 @@ namespace TestCLI
 
             var responseList = new List<Task<TickerResponse>>();
 
+            Console.WriteLine("GetAsync start");
             Console.WriteLine(DateTime.Now.ToString("o"));
             responseList.Add(client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("BTCEUR")));
             responseList.Add(client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("LTCEUR")));
@@ -60,9 +61,9 @@ namespace TestCLI
             responseList.Add(client.GetAsync<TickerResponse>(requestFactory.GetTickerRequest("ETHEUR")));
             Task.WaitAll(responseList.ToArray());
             Console.WriteLine(DateTime.Now.ToString("o"));
+            Console.WriteLine("GetAsync end");
 
-
-
+            Console.WriteLine("Get start");
             Console.WriteLine(DateTime.Now.ToString("o"));
             var tickerBTCEUR = client.Get<TickerResponse>(requestFactory.GetTickerRequest("BTCEUR"));
             var tickerETHEUR = client.Get<TickerResponse>(requestFactory.GetTickerRequest("ETHEUR"));
@@ -80,6 +81,7 @@ namespace TestCLI
             var tickerETHEUR4 = client.Get<TickerResponse>(requestFactory.GetTickerRequest("ETHEUR"));
             var tickerLTCEUR4 = client.Get<TickerResponse>(requestFactory.GetTickerRequest("LTCEUR"));
             Console.WriteLine(DateTime.Now.ToString("o"));
+            Console.WriteLine("Get end");
         }
     }
 }
